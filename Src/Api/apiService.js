@@ -3,6 +3,7 @@ import apiClient from "./apiClient";
 // Generic function
 export const apiCall = async (method, url, data = {}, config = {}) => {
   try {
+    
     const response = await apiClient({
       method,
       url,

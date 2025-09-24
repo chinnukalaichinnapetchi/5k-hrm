@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Base URL (replace with your backend endpoint)
-const API_BASE_URL = "https://5khrm.in";
+// Base URL 
+const API_BASE_URL = " http://5khrm.in/api/";
 
 // Create axios instance
 const apiClient = axios.create({

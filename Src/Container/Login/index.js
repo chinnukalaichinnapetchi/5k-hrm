@@ -10,18 +10,23 @@ import {
   Platform,
   Dimensions,
   Alert,
-  ScrollView
+  ScrollView,
+  AsyncStorage
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { postData } from "../../Api/apiService";
+import Loader from "../../Components/Loader";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
+//import AnimatedLoader from "../../Components/Loader";
 const { width, height } = Dimensions.get("window");
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
+ const [showPassword, setShowPassword] = useState(false);
   const validate = () => {
     let valid = true;
     let newErrors = {};
@@ -44,27 +49,30 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async() => {
-    let data={
-      "_token":"IXW2FLiKUBZcqJ56HsShIfGH8fiONjLmSI4yi2Jd",
-  "email": email,
-  "password": password
-}
-console.log(data,'data');
-
+    if (validate()) {
+      setLoading(true)
      try {
-      const res = await postData("/login",data); 
+      const res = await postData("/login_api?",{ email: email, password:password}); 
       console.log(res,'resresresresres');
-      
-      //setEmployees(res);
+      if(res.status===200){
+        await AsyncStorage.setItem(
+      'userData',
+      JSON.stringify(res.userData),
+    );
+navigation.navigate('Dashboard')
+      }else{
+        setLoading(false)
+        Alert.alert("Error", "Invalid login, please try again");
+
+      }
     } catch (err) {
+      setLoading(false)
       console.error("Error fetching employees:", err.message);
     } finally {
-     // setLoading(false);
+      setLoading(false);
     }
-    // if (validate()) {
-      navigation.navigate('Dashboard')
-      //Alert.alert("Success", "Logged in successfully!");
-   // }
+  }
+   
   };
 
   return (
@@ -105,7 +113,7 @@ console.log(data,'data');
           {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
           <Text style={styles.label}>Password</Text>
-          <TextInput
+          {/* <TextInput
             style={[styles.input, errors.password && styles.inputError]}
             placeholder="Enter Password"
             value={password}
@@ -117,7 +125,30 @@ console.log(data,'data');
           />
           {errors.password && (
             <Text style={styles.error}>{errors.password}</Text>
-          )}
+          )} */}
+          <View style={styles.passinputContainer}>
+      <TextInput
+        style={[styles.passinput, errors.password && styles.passinputError]}
+        placeholder="Enter Password"
+        value={password}
+        onChangeText={(text) => {
+          setPassword(text);
+          setErrors({ ...errors, password: null });
+        }}
+        secureTextEntry={!showPassword}
+      />
+      <TouchableOpacity
+        style={styles.icon}
+        onPress={() => setShowPassword(!showPassword)}
+      >
+        <Ionicons
+          name={showPassword ? "eye-off" : "eye"}
+          size={22}
+          color="#666"
+        />
+      </TouchableOpacity>
+      {errors.password && <Text style={styles.passerror}>{errors.password}</Text>}
+    </View>
         </View>
 
         {/* Bottom Button */}
@@ -125,6 +156,7 @@ console.log(data,'data');
         </View>
         </ScrollView>
       </KeyboardAvoidingView>
+       <Loader visible={loading} message="Please wait..." />
        <View style={styles.footer}>
           <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Login</Text>
@@ -173,7 +205,7 @@ const styles = StyleSheet.create({
     borderWidth:0.5,
     padding: 16,
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 8,
   },
   inputError: {
     borderWidth: 1,
@@ -182,7 +214,7 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     fontSize: 12,
-    marginBottom: 8,
+    marginBottom: 5,
   },
   footer: {
     paddingBottom: 30,
@@ -198,5 +230,31 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  passinputContainer: {
+    position: "relative",
+    width: "100%",
+  },
+  passinput: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingRight: 40, // space for the eye icon
+    fontSize: 16,
+  },
+  passinputError: {
+    borderColor: "red",
+  },
+  icon: {
+    position: "absolute",
+    right: 10,
+    top: 14,
+  },
+  passerror: {
+    color: "red",
+    marginTop: 5,
+    fontSize: 13,
   },
 });
