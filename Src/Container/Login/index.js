@@ -11,13 +11,13 @@ import {
   Dimensions,
   Alert,
   ScrollView,
-  AsyncStorage
+  
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { postData } from "../../Api/apiService";
 import Loader from "../../Components/Loader";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //import AnimatedLoader from "../../Components/Loader";
 const { width, height } = Dimensions.get("window");
 
@@ -49,6 +49,7 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async() => {
+    navigation.navigate('Main')
     if (validate()) {
       setLoading(true)
      try {
@@ -59,7 +60,7 @@ const Login = ({ navigation }) => {
       'userData',
       JSON.stringify(res.userData),
     );
-navigation.navigate('Dashboard')
+navigation.navigate('Main')
       }else{
         setLoading(false)
         Alert.alert("Error", "Invalid login, please try again");

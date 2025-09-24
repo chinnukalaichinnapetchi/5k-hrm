@@ -1,16 +1,20 @@
 // DrawerNavigation.js (your existing DrawerNavigation component file)
-import React,{useState} from "react";
-import { createDrawerNavigator,DrawerContentScrollView } from "@react-navigation/drawer";
+import React, { useState } from "react";
+import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import {
   View,
   Text,
   TouchableOpacity,
   StatusBar,
   StyleSheet,
+  Image,
+  Dimensions
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Dashboard from "../../Dashboard";
 
 const Drawer = createDrawerNavigator();
+const { width, height } = Dimensions.get("window");
 
 function Screen({ route }) {
   return (
@@ -22,11 +26,19 @@ function Screen({ route }) {
 
 // Custom Drawer Content
 function CustomDrawerContent({ navigation }) {
-  //const [performanceOpen, setPerformanceOpen] = useState(false);
+  const [performanceOpen, setPerformanceOpen] = useState(false);
+  const [timesheetOpen, settimesheetOpen] = useState(false);
+  const [PayrollOpen, setpayrollOpen] = useState(false);
+
 
   return (
     <DrawerContentScrollView>
-      <Text style={styles.header}>JK CAR CARE</Text>
+      {/* <Text style={styles.header}>JK CAR CARE</Text> */}
+      <Image
+        source={require("../../../assets/logo.png")} // <-- your logo here
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
       {/* Dashboard */}
       <MenuItem
@@ -43,35 +55,83 @@ function CustomDrawerContent({ navigation }) {
       />
 
       {/* Payroll */}
-      <MenuItem
-        label="Payroll"
-        icon="document-text-outline"
-        active
-        onPress={() => navigation.navigate("Payroll")}
-      />
 
+      <TouchableOpacity
+        style={styles.menuItemstyle}
+        onPress={() => setpayrollOpen(!PayrollOpen)}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <Ionicons name="document-text-outline" size={20} color={PayrollOpen ? "#594da1" : "#414141"}
+          />
+          <Text style={[styles.menuText, { color: PayrollOpen ? "#594da1" : "#414141" }]}
+          >Payroll</Text>
+        </View>
+        <Ionicons
+          name={PayrollOpen ? "chevron-up-outline" : "chevron-down-outline"}
+          size={22}
+          color={PayrollOpen ? "#594da1" : "#414141"}
+        />
+      </TouchableOpacity>
+      {PayrollOpen && (
+        <View style={styles.subMenu}>
+          <SubMenuItem
+            label="Payslip"
+            onPress={() => navigation.navigate("Payroll")}
+          />
+        </View>
+      )}
       {/* Timesheet */}
-      <MenuItem
-        label="Timesheet"
-        icon="time-outline"
-        onPress={() => navigation.navigate("Timesheet")}
-      />
-
+      <TouchableOpacity
+        style={styles.menuItemstyle}
+        onPress={() => settimesheetOpen(!timesheetOpen)}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <Ionicons name="time-outline" size={20} color={timesheetOpen ? "#594da1" : "#414141"}
+          />
+          <Text style={[styles.menuText, { color: timesheetOpen ? "#594da1" : "#414141" }]}
+          >Timesheet</Text>
+        </View>
+        <Ionicons
+          name={timesheetOpen ? "chevron-up-outline" : "chevron-down-outline"}
+          size={22}
+          color={timesheetOpen ? "#594da1" : "#414141"}
+        />
+      </TouchableOpacity>
+      {timesheetOpen && (
+        <View style={styles.subMenu}>
+          <SubMenuItem
+            label="Timesheet"
+            onPress={() => navigation.navigate("Timesheet")}
+          />
+          <SubMenuItem
+            label="Manage leave"
+            onPress={() => navigation.navigate("Timesheet")}
+          />
+          <SubMenuItem
+            label="Attendance"
+            onPress={() => navigation.navigate("Timesheet")}
+          />
+        </View>
+      )}
       {/* Performance expandable */}
       <TouchableOpacity
-        style={styles.menuItem}
-        //onPress={() => setPerformanceOpen(!performanceOpen)}
+        style={styles.menuItemstyle}
+        onPress={() => setPerformanceOpen(!performanceOpen)}
       >
-        <Ionicons name="bar-chart-outline" size={20} color="#5B21B6" />
-        <Text style={[styles.menuText, { color: "#5B21B6" }]}>Performance</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Ionicons name="bar-chart-outline" size={20} color={performanceOpen ? "#594da1" : "#414141"}
+          />
+          <Text style={[styles.menuText, { color: performanceOpen ? "#594da1" : "#414141" }]}
+          >Performance</Text>
+        </View>
         <Ionicons
-          //name={performanceOpen ? "chevron-up-outline" : "chevron-down-outline"}
-          size={18}
-          color="#5B21B6"
+          name={performanceOpen ? "chevron-up-outline" : "chevron-down-outline"}
+          size={22}
+          color={performanceOpen ? "#594da1" : "#414141"}
         />
       </TouchableOpacity>
 
-      {/* {performanceOpen && (
+      {performanceOpen && (
         <View style={styles.subMenu}>
           <SubMenuItem
             label="Credit Letter"
@@ -82,7 +142,7 @@ function CustomDrawerContent({ navigation }) {
             onPress={() => navigation.navigate("Warning Letter")}
           />
         </View>
-      )} */}
+      )}
 
       {/* Ticket */}
       <MenuItem
@@ -108,7 +168,7 @@ function MenuItem({ label, icon, active, onPress }) {
       style={[styles.menuItem, active && styles.activeMenu]}
       onPress={onPress}
     >
-      <Ionicons name={icon} size={20} color={active ? "#fff" : "#374151"} />
+      <Ionicons name={icon} size={20} color={active ? "#fff" : "#414141"} />
       <Text style={[styles.menuText, active && { color: "#fff" }]}>{label}</Text>
     </TouchableOpacity>
   );
@@ -126,10 +186,10 @@ function SubMenuItem({ label, onPress }) {
 export default function DrawerNavigation() {
   return (
     <Drawer.Navigator
-      screenOptions={{ headerShown: true }}
+      screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="Dashboard" component={Screen} />
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="Employee" component={Screen} />
       <Drawer.Screen name="Payroll" component={Screen} />
       <Drawer.Screen name="Timesheet" component={Screen} />
@@ -145,21 +205,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     margin: 16,
-    color: "#111827",
+    color: "#000000"
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
   },
+  menuItemstyle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: 'space-between',
+    padding: 12,
+  },
   activeMenu: {
-    backgroundColor: "#5B21B6",
+    backgroundColor: "#6fd943",
     borderRadius: 8,
   },
   menuText: {
     marginLeft: 12,
-    fontSize: 16,
-    color: "#374151",
+    fontSize: 18,
+    fontWeight: '500',
+    color: "#414141"
   },
   subMenu: {
     paddingLeft: 30,
@@ -173,12 +240,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#5B21B6",
+    backgroundColor: "#6fd943",
     marginRight: 8,
   },
   subMenuText: {
-    fontSize: 14,
-    color: "#374151",
+    fontSize: 16,
+    fontWeight: '400',
+    color: "#414141"
   },
   screen: {
     flex: 1,
@@ -188,5 +256,11 @@ const styles = StyleSheet.create({
   screenText: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  logo: {
+    width: width * 0.8,
+    height: height * 0.11,
+    //alignSelf: "center",
+    marginVertical: 15,
   },
 });

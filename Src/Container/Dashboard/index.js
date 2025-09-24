@@ -1,15 +1,32 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import {View, Text,ScrollView,StyleSheet,TouchableOpacity } from "react-native";
 import CustomHeader from "../../Components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { getCurrentLocation } from "./LocationService";
 import { getCurrentLocationWithAddress } from "./LocationService";
 
-const Dashboard = () => {
+const Dashboard = ({navigation}) => {
     const [checkInLocation, setCheckInLocation] = useState(null);
     const [checkOutLocation, setCheckOutLocation] = useState(null);
     const [Clockinbuttondisable,setClockinbuttondisable]=useState(false);
     const [Clockoutbuttondisable,setClockoutbuttondisable]=useState(true)
+    const  [userdata,setUserdata]=useState({})
+
+     useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userDataString = await AsyncStorage.getItem('userData');
+        const userData = userDataString ? JSON.parse(userDataString) : null;
+        console.log('userData', userData);
+        setUserdata(userData || {});
+      } catch (error) {
+        console.log('Error reading userData from AsyncStorage', error);
+      }
+    };
+
+    fetchUserData();
+  }, [])
 
     const handleCheckIn = async () => {
   try {
@@ -47,10 +64,10 @@ const Dashboard = () => {
     }
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 ,backgroundColor:'white'}}>
       <CustomHeader
-        username="PALANIKUMAR"
-        onMenuPress={() => alert("Open Side Menu")}
+        username={userdata?.fullName}
+         onMenuPress={() => navigation.toggleDrawer()}
         onProfilePress={() => alert("Go to Profile")}
       />
       <ScrollView contentContainerStyle={styles.container}>

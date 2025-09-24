@@ -34,8 +34,8 @@ export default function RouteNavigation() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Dashboard"
-            component={Dashboard}
+            name="Main"
+            component={DrawerNavigation}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

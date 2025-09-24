@@ -10,7 +10,7 @@ const CustomHeader = ({ username, onMenuPress, onProfilePress }) => {
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 16,
-        paddingVertical: 16,
+        paddingVertical: 14,
         backgroundColor: "#fff",
         elevation: 4, // shadow for Android
         shadowColor: "#000", // shadow for iOS
@@ -21,17 +21,17 @@ const CustomHeader = ({ username, onMenuPress, onProfilePress }) => {
     >
       {/* Left - Menu Icon */}
       <TouchableOpacity onPress={onMenuPress}>
-         <AppIcon type="Feather" name="menu" size={32} color="#000" />
+         <AppIcon type="Feather" name="menu" size={28} color="#000" />
       </TouchableOpacity>
 
       {/* Center - Username */}
-      <Text style={{ fontSize: 22, fontWeight: "bold", color: "#000" }}>
+      <Text style={{ fontSize: 18, fontWeight: "bold", color: "#000" }}>
         {username}
       </Text>
 
       {/* Right - Profile Icon */}
       <TouchableOpacity onPress={onProfilePress}>
-               <AppIcon type="Ionicons" name="person-circle" size={44} color="#54c747"  />
+               <AppIcon type="Ionicons" name="person-circle" size={32} color="#54c747"  />
 
       </TouchableOpacity>
     </View>
