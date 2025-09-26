@@ -65,11 +65,12 @@ useEffect(() => {
       console.log("res",res);
       
       if(res.status===200){
-              setLoading(false)
+             
       setCheckInLocation(location.address);
 
         setClockinbuttondisable(false);
       setClockinbuttondisable(true);
+       setLoading(false)
       }else{
         setLoading(false)
       }
