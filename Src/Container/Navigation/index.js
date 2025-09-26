@@ -13,7 +13,9 @@ import 'react-native-reanimated';
 import DrawerNavigation from "./DrawerNavigation";
 import Login from "../Login";
 import Dashboard from "../Dashboard"
-
+import Profile from "../Profile";
+import PersonalInfo from "../Profile/Personalinfo";
+import ChangePassword from "../Profile/Changepassword";
 // Navigators
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +40,23 @@ export default function RouteNavigation() {
             component={DrawerNavigation}
             options={{ headerShown: false }}
           />
+           <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ headerShown: false }}
+          />
+          
+           <Stack.Screen
+            name="PersonalInfo"
+            component={PersonalInfo}
+            options={{ headerShown: false }}
+          />
+           <Stack.Screen
+            name="ChangePassword"
+            component={ChangePassword}
+            options={{ headerShown: false }}
+          />
+          
         </Stack.Navigator>
       </NavigationContainer>
     // </SafeAreaView>

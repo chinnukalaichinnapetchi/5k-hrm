@@ -237,9 +237,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 5,
     backgroundColor: "#6fd943",
     marginRight: 8,
   },

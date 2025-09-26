@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -27,6 +27,21 @@ const Login = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
  const [showPassword, setShowPassword] = useState(false);
+ useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("userData");
+        if (userData) {
+          navigation.replace("Main"); // replace so user can’t go back to login
+        }
+      } catch (error) {
+        console.log("Error checking login status:", error);
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigation]);
+
   const validate = () => {
     let valid = true;
     let newErrors = {};
@@ -49,7 +64,7 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async() => {
-    navigation.navigate('Main')
+   // navigation.navigate('Main')
     if (validate()) {
       setLoading(true)
      try {
@@ -192,6 +207,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
+    //height: 50,
     marginHorizontal:10,
      marginTop: 30,
   },
@@ -203,8 +219,9 @@ const styles = StyleSheet.create({
   input: {
     //backgroundColor: "#eaf0fb",
     borderRadius: 8,
-    borderWidth:0.5,
-    padding: 16,
+    borderWidth:1,
+    borderColor: "#ccc",
+    padding: 14,
     fontSize: 16,
     marginBottom: 8,
   },
@@ -235,6 +252,8 @@ const styles = StyleSheet.create({
   passinputContainer: {
     position: "relative",
     width: "100%",
+    marginTop:10,
+  
   },
   passinput: {
     height: 50,

@@ -1,10 +1,12 @@
 import React,{useEffect, useState} from "react";
-import {View, Text,ScrollView,StyleSheet,TouchableOpacity } from "react-native";
+import {View, Text,ScrollView,StyleSheet,TouchableOpacity,BackHandler,Alert, StatusBar } from "react-native";
 import CustomHeader from "../../Components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //import { getCurrentLocation } from "./LocationService";
 import { getCurrentLocationWithAddress } from "./LocationService";
+import Loader from "../../Components/Loader";
+import { postData } from "../../Api/apiService";
 
 const Dashboard = ({navigation}) => {
     const [checkInLocation, setCheckInLocation] = useState(null);
@@ -12,6 +14,7 @@ const Dashboard = ({navigation}) => {
     const [Clockinbuttondisable,setClockinbuttondisable]=useState(false);
     const [Clockoutbuttondisable,setClockoutbuttondisable]=useState(true)
     const  [userdata,setUserdata]=useState({})
+    const [loading,setLoading]=useState(false)
 
      useEffect(() => {
     const fetchUserData = async () => {
@@ -27,20 +30,52 @@ const Dashboard = ({navigation}) => {
 
     fetchUserData();
   }, [])
+useEffect(() => {
+    const backAction = () => {
+      Alert.alert("5K_HRM", "Do you want to exit the app?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() }
+      ]);
+      return true; // prevent default back behavior
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // cleanup on unmount
+  }, []);
 
     const handleCheckIn = async () => {
+      setLoading(true)
   try {
     const location = await getCurrentLocationWithAddress();
     console.log("Check-In Location:", location);
 
     if (location) {
       //setCheckInLocation(location.coords);
+
+      
+      const res = await postData("/attendance_clock_in?",{ employee_code: userdata?.employee_code, user_id:userdata?.id,clockin_address:location.address}); 
+      console.log("res",res);
+      
+      if(res.status===200){
+              setLoading(false)
       setCheckInLocation(location.address);
 
-      setClockoutbuttondisable(false);
+        setClockinbuttondisable(false);
       setClockinbuttondisable(true);
+      }else{
+        setLoading(false)
+      }
     }
   } catch (err) {
+    setLoading(false)
     console.error("Check-In Error:", err);
     if (err.code === 3) {
       alert("Location request timed out. Please ensure GPS is on.");
@@ -56,7 +91,7 @@ const Dashboard = ({navigation}) => {
       const location = await getCurrentLocationWithAddress();
       if (location) {
         setCheckOutLocation(location.address);
-         setClockoutbuttondisable(false)
+        setClockoutbuttondisable(false)
         setClockinbuttondisable(false)
       }
     } catch (err) {
@@ -64,11 +99,13 @@ const Dashboard = ({navigation}) => {
     }
   };
   return (
-    <SafeAreaView style={{ flex: 1 ,backgroundColor:'white'}}>
+    <SafeAreaView style={{ flex: 1,
+    backgroundColor: "#fff",}}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <CustomHeader
-        username={userdata?.fullName}
+        username={userdata?.employee_code}
          onMenuPress={() => navigation.toggleDrawer()}
-        onProfilePress={() => alert("Go to Profile")}
+        onProfilePress={() => navigation.navigate('Profile')}
       />
       <ScrollView contentContainerStyle={styles.container}>
 
@@ -101,6 +138,8 @@ const Dashboard = ({navigation}) => {
   </View>
 
       )}
+             <Loader visible={loading}  />
+
           <View style={styles.buttonRow}>
             <TouchableOpacity disabled={Clockinbuttondisable} onPress={handleCheckIn} style={[styles.clockInBtn,{backgroundColor:Clockinbuttondisable?'grey':'#4ADE80'}]}>
               <Text style={styles.btnText}>CLOCK IN</Text>

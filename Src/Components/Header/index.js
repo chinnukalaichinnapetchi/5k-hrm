@@ -10,13 +10,10 @@ const CustomHeader = ({ username, onMenuPress, onProfilePress }) => {
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 16,
-        paddingVertical: 14,
-        backgroundColor: "#fff",
-        elevation: 4, // shadow for Android
-        shadowColor: "#000", // shadow for iOS
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
+        paddingVertical: Platform.OS === "android" ? 15 : 20,
+            backgroundColor: "#fff",
+            borderBottomWidth: 1,
+            borderBottomColor: "#eee",
       }}
     >
       {/* Left - Menu Icon */}
