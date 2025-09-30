@@ -71,6 +71,8 @@ const Login = ({ navigation }) => {
       const res = await postData("/login_api?",{ email: email, password:password}); 
       console.log(res,'resresresresres');
       if(res.status===200){
+        await AsyncStorage.setItem("token", res.accessToken);
+
         await AsyncStorage.setItem(
       'userData',
       JSON.stringify(res.userData),

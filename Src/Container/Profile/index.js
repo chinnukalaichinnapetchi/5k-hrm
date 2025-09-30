@@ -18,9 +18,13 @@ const Profile = ({ navigation }) => {
     setActiveItem(item);
     if (item === 'Logout') {
       await AsyncStorage.setItem('userData', '');
+        await AsyncStorage.setItem("token", '');
+
       navigation.navigate('Login');
-    }
+    }else{
     navigation.navigate(item);
+
+    }
   };
 
   const handleLogout = () => {
