@@ -121,6 +121,7 @@ navigation.navigate('Main')
           <TextInput
             style={[styles.input, errors.email && styles.inputError]}
             placeholder="Enter Email or User ID"
+            placeholderTextColor="#888"
             value={email}
             onChangeText={(text) => {
               setEmail(text);
@@ -148,6 +149,7 @@ navigation.navigate('Main')
       <TextInput
         style={[styles.passinput, errors.password && styles.passinputError]}
         placeholder="Enter Password"
+        placeholderTextColor="#888"
         value={password}
         onChangeText={(text) => {
           setPassword(text);
@@ -265,6 +267,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingRight: 40, // space for the eye icon
     fontSize: 16,
+    color:'#000000'
   },
   passinputError: {
     borderColor: "red",

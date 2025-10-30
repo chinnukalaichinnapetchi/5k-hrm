@@ -18,7 +18,8 @@ const Dashboard = ({ navigation }) => {
   const [employeedata, setemployeeData] = useState({})
   const [clock_inTime,setClockInTime]=useState('')
     const [clock_outTime,setClockoutTime]=useState('')
-
+  const [company_startTime,setCompanyStartTime]=useState('')
+    const [company_endTime,setCompanyendTime]=useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -49,10 +50,12 @@ const Dashboard = ({ navigation }) => {
 
           }
           // setClockoutbuttondisable(res.data?.clock_out_button)
-          setClockInTime(res.data?.clock_in)
-          setClockoutTime(res.data?.clock_out)
-          setCheckInLocation(res.data?.checkin_address)
+          setClockInTime(res?.data?.clock_in)
+          setClockoutTime(res?.data?.clock_out)
+          setCheckInLocation(res?.data?.checkin_address)
           setCheckOutLocation(res?.data?.checkout_address)
+          setCompanyStartTime(res?.data?.company_start_time )
+          setCompanyendTime(res?.data?.company_end_time )
           setLoading(false)
         }else {
           setLoading(false)
@@ -100,15 +103,22 @@ const Dashboard = ({ navigation }) => {
         console.log("res", res);
 
         if (res.status === 200) {
-          setCheckOutLocation(res?.data?.checkin_address);
-          setClockoutTime(res.data?.clock_in)
-          setCheckInLocation(location.address);
-
-          setClockinbuttondisable(false);
+          setCheckInLocation(res?.data?.checkin_address);
+          setClockInTime(res.data?.clock_in)
         setClockinbuttondisable(true);
+        setClockoutbuttondisable(false);
           setLoading(false)
-        } else {
+        } else if(res.status===500) {
           setLoading(false)
+          Alert.alert("5K_HRM",res.message, [
+        // {
+        //   text: "Cancel",
+        //   onPress: () => null,
+        //   style: "cancel"
+        // },
+        { text: "Okay", onPress: () => null, }
+      ]);
+          
         }
       }
     } catch (err) {
@@ -173,14 +183,16 @@ const Dashboard = ({ navigation }) => {
         {/* Mark Attendance Card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>🕒 Mark Attendance</Text>
+          {(company_startTime!=''&&company_endTime!='')?
            <View style={{flexDirection:'row'}}>
               <Text style={styles.text}>My Office Time :</Text>
               <Text style={[styles.text,{marginHorizontal:15, fontWeight:'600',color:'black'}]}>
-                09:00 to 18:00
+                {company_startTime} to {company_endTime}
                 {/* Lat: {checkInLocation.latitude}, Lon: {checkInLocation.longitude} */}
               </Text>
             </View>
-           {clock_inTime !== "00:00:00" && (
+            :null}
+           {(clock_inTime !== "00:00:00"&&clock_inTime!='') && (
             <View style={{flexDirection:'row'}}>
               <Text style={styles.text}>Clock In Time :</Text>
               <Text style={[styles.text,{marginHorizontal:15, fontWeight:'600',color:'black'}]}>
@@ -189,7 +201,7 @@ const Dashboard = ({ navigation }) => {
               </Text>
             </View>
           )}
-          {clock_outTime!== "00:00:00" && (
+          {(clock_outTime!== "00:00:00"&&clock_outTime!='') && (
             <View style={{flexDirection:'row'}}>
               <Text style={styles.text}>Clock Out Time :</Text>
               <Text style={[styles.text,{marginHorizontal:15, fontWeight:'600',color:'black'}]}>

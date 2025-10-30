@@ -1,11 +1,9 @@
-// DrawerNavigation.js (your existing DrawerNavigation component file)
 import React, { useState } from "react";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   StyleSheet,
   Image,
   Dimensions

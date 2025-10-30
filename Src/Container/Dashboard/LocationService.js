@@ -28,8 +28,18 @@ export async function getCurrentLocationWithAddress() {
 
           // Reverse Geocode
           const geoResponse = await Geocoder.from(latitude, longitude);
+
+          // Filter results (ignore plus_code)
+          const addressResult = geoResponse.results.find(
+            (r) => r.formatted_address && !r.formatted_address.includes("+")
+          );
+
           const address =
-            geoResponse.results?.[0]?.formatted_address || "Address not found";
+            addressResult?.formatted_address ||
+            geoResponse.results?.[0]?.formatted_address ||
+            "Address not found";
+            console.log('address',address);
+            
 
           resolve({
             coords: { latitude, longitude },

@@ -4,6 +4,10 @@ apply plugin: "com.facebook.react"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 project.ext.react = [
     enableHermes: true,  //  must be here, top-level
+    bundleInRelease: true,
+    bundleInDebug: false,
+    devDisabledInRelease: true,
+    hermesFlags: ["-O", "-output-source-map"]
 ]
 def hermesEnabled = project.ext.react.get("enableHermes", false)
 
@@ -62,7 +66,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -89,6 +93,14 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        
+        // Enable multidex for large apps
+        multiDexEnabled true
+        
+        // Support only most common architectures in single APK
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
     }
    
     signingConfigs {
@@ -108,14 +120,50 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            
+            // Additional optimizations for single APK
+            zipAlignEnabled true
+            debuggable false
+            jniDebuggable false
+            pseudoLocalesEnabled false
+            
+            // Additional optimizations for size
+            crunchPngs true
+            shrinkResources true
         }
+    }
+    
+    // Disable APK splitting - create single optimized APK
+    splits {
+        abi {
+            enable false
+        }
+    }
+    
+    // Additional packaging options for size optimization (do not exclude required native libs)
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/*.kotlin_module'
     }
 }
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    
+    // Add multidex support
+    implementation("androidx.multidex:multidex:2.0.1")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -123,3 +171,5 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// Note: Avoid custom manifest mutation in Gradle tasks to prevent ProcessManifest failures
