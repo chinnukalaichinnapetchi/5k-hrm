@@ -3,7 +3,7 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 project.ext.react = [
-    enableHermes: true,  //  must be here, top-level
+    enableHermes: false,  //  must be here, top-level
     bundleInRelease: true,
     bundleInDebug: false,
     devDisabledInRelease: true,
